@@ -20,12 +20,13 @@ struct Individual indi[NP];
 
 double(*solution_func)(double);
 
-// Generate random number between min and max
+// Description : Generate random number between min and max
 inline double myRand(double min, double max)
 {
 	return rand() / (32768.0 / abs(min - max)) + min;
 }
 
+// Description : This function is used for crossover
 bool isAbleToCrossover()
 {
 	if (myRand(0.0, 1.0) < CR)
@@ -34,7 +35,7 @@ bool isAbleToCrossover()
 	return true;
 }
 
-// Calculate indi value
+// Description : Calculate indi value
 inline double calcIndividualScore(int n, double x) {
 	double indi_value = 0;
 	for (int sq = DIMENSION; sq >= 0; sq--)
@@ -44,13 +45,13 @@ inline double calcIndividualScore(int n, double x) {
 	return indi_value;
 }
 
-// Initial value setting randomly.
+// Description : Initial value setting randomly.
 void init()
 {
 	solution_func = normal_distribution;
 
 	//srand(time(NULL));
-	srand(987654321);
+	srand(987654321);	// for Debugging
 
 	for (int i = 0; i < NP; i++)
 	{
@@ -124,7 +125,7 @@ void main()
 
 }
 
-// Gernerte input data for test	// Not use...
+// Description : Gernerte input data for test	// Not use...
 void generate_input()
 {
 	//srand(time(NULL));

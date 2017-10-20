@@ -76,6 +76,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="de.h" />
+    <ClInclude Include="functions.h" />
+    <ClInclude Include="setting.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="de.cpp" />
+    <ClCompile Include="functions.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
