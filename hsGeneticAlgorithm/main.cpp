@@ -17,6 +17,7 @@ struct Individual {
 
 double input[INPUT_SIZE] = { 0, };
 struct Individual indi[NP];
+struct Individual indi2[NP];
 
 double(*solution_func)(double);
 
@@ -36,14 +37,33 @@ bool isAbleToCrossover()
 }
 
 // Description : Calculate indi value
-inline double calcIndividualScore(int n, double x) {
+inline double calcIndividualValue(struct Individual indi_inst, double x) {
 	double indi_value = 0;
 	for (int sq = DIMENSION; sq >= 0; sq--)
 	{
-		indi_value += indi[n].x[DIMENSION - sq] * pow(x, sq);
+		indi_value += indi_inst.x[DIMENSION - sq] * pow(x, sq);
 	}
 	return indi_value;
 }
+
+double evalutionIndi(struct Individual indi_inst)
+{
+	indi_inst.score = 0;
+	double x = RANGE_X_MIN;
+	while (x < RANGE_X_MAX)
+	{
+		//double test = calcIndividualValue(i, x);
+		double tmp = normal_distribution(x) - calcIndividualValue(indi_inst, x);
+		indi_inst.score += pow(tmp, 2);
+
+		if (indi_inst.score < 0)
+			printf("asdf");
+		//double aaa = ABS(RANGE_X_MIN - RANGE_X_MAX);
+		x += EVAL_X_STEP;
+	}
+	return indi_inst.score;
+}
+
 
 // Description : Initial value setting randomly.
 void init()
@@ -56,20 +76,13 @@ void init()
 	for (int i = 0; i < NP; i++)
 	{
 		printf("%d : ", i);
-		for (int j = 0; j < DIMENSION; j++)
+		for (int j = 0; j < DIMENSION+1; j++)
 		{
 			indi[i].x[j] = myRand(RANGE_Y_MIN, RANGE_Y_MAX);
 			printf("%lf, ", indi[i].x[j]);
 			
 		}
-		indi[i].score = 0;
-		double x = RANGE_X_MIN;
-		while (x < RANGE_X_MAX)
-		{
-			indi[i].score = calcIndividualScore(i, x);
-			double aaa = ABS(RANGE_X_MIN - RANGE_X_MAX);
-			x += EVAL_X_STEP;
-		}
+		indi[i].score = evalutionIndi(indi[i]);
 		printf(" ---- %lf\n", indi[i].score);
 	}
 
@@ -77,25 +90,6 @@ void init()
 
 
 
-void evalution()
-{
-	double x = RANGE_X_MIN;
-
-	while (x < RANGE_X_MAX)
-	{
-		for (int n = 0; n < NP; n++)
-		{
-			// Calculate indi value
-			double indi_value = calcIndividualScore(n, x);
-
-			// Calulate solution value
-			double sol_value = solution_func(x);
-
-			indi[n].score = pow(indi_value - sol_value, 2);
-		}
-		x += EVAL_X_STEP;
-	}
-}
 
 void main()
 {
@@ -107,15 +101,81 @@ void main()
 
 	while (gen_cnt < GENERATION_MAX)
 	{
-		// Mutate, Recombine
+		for (int i = 0; i < NP; i++)
+		{
+			struct Individual trial;
 
-		// Evaluate
+			// Mutate, Recombine
+			int a, b, c;
+			do a = myRand(0, NP); while (a == i);
+			do b = myRand(0, NP); while (b == i || b == a);
+			do c = myRand(0, NP); while (c == i || c == a || c == b);
 
-		// Sort
+			int k = myRand(0, DIMENSION);
+			for (int j = 0; j < DIMENSION+1; j++) 
+			{
+				if (isAbleToCrossover() || j == k) 
+				{
+					trial.x[j] = indi[c].x[j] + F * (indi[a].x[j] - indi[b].x[j]);
+				}
+				else 
+				{
+					trial.x[j] = indi[i].x[j];
+				}
+			}
 
-		// Select
+			// Evaluate
+			trial.score = evalutionIndi(trial);
+			if (trial.score <= indi[i].score)
+			{
+				for (int j = 0; j < DIMENSION+1; j++)
+				{
+					indi2[i].x[j] = trial.x[j];
+				}
+				indi2[i].score = trial.score;
+			}
+			else
+			{
+				for (int j = 0; j < DIMENSION+1; j++)
+				{
+					indi2[i].x[j] = indi[i].x[j];
+				}
+				indi2[i].score = evalutionIndi(indi2[i]);
+			}
+			
+		}
+
+		// Copy population for next generation
+		for (int i = 0; i < NP; i++)
+		{
+			for (int j = 0; j < DIMENSION+1; j++)
+			{
+				indi[i].x[j] = indi2[i].x[j];
+				indi[i].score = indi2[i].score;
+
+			}
+		}
+
+		// Output best individual for viewer
+		double best_score = 987654231.0;
+		int best_index = -1;
+		for (int i = 0; i < NP; i++)
+		{
+			if (best_score > indi[i].score)
+			{
+				best_score = indi[i].score;
+				best_index = i;
+			}
+			//printf("%d -> %d : %lf, %lf, %lf, ----- %lf\n", gen_cnt, i, indi[i].x[0], indi[i].x[1], indi[i].x[2], indi[i].score);
+		}
 
 		gen_cnt++;
+		printf("\rbest of %d : ", gen_cnt);
+		for (int j = 0; j < DIMENSION + 1; j++)
+		{
+			printf("%lf, ", indi[best_index].x[j]);
+		}
+		printf(" --> score : %lf\n", indi[best_index].score);
 	}
 	
 	for (int i = 0; i < INPUT_SIZE; i++)
@@ -143,7 +203,25 @@ void generate_input()
 
 
 
+void evalution()
+{
+	double x = RANGE_X_MIN;
 
+	while (x < RANGE_X_MAX)
+	{
+		for (int n = 0; n < NP; n++)
+		{
+			// Calculate indi value
+			double indi_value = calcIndividualValue(indi[n], x);
+
+			// Calulate solution value
+			double sol_value = solution_func(x);
+
+			indi[n].score = pow(indi_value - sol_value, 2);
+		}
+		x += EVAL_X_STEP;
+	}
+}
 
 
 
