@@ -91,7 +91,7 @@ void init()
 
 
 
-void main()
+int main(void)
 {
 	//generate_input(normal_distribution);
 
@@ -182,7 +182,8 @@ void main()
 	{
 		//printf("%lf\n", input[i]);
 	}
-
+	
+	return 0;
 }
 
 // Description : Gernerte input data for test	// Not use...

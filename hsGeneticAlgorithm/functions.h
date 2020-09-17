@@ -1,7 +1,4 @@
-#ifndef __FUNCTION_H__
-#define __FUNCTION_H__
+#pragma once
 
 double normal_distribution(double x);
 
-
-#endif
