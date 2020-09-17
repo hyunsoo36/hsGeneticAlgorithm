@@ -70,8 +70,8 @@ void init()
 {
 	solution_func = normal_distribution;
 
-	//srand(time(NULL));
-	srand(987654321);	// for Debugging
+	srand(time(NULL));
+	//srand(987654321);	// for Debugging
 
 	for (int i = 0; i < NP; i++)
 	{
