@@ -8,7 +8,7 @@
 #define RANGE_X_MAX		(2.0)
 #define RANGE_Y_MIN		(-1.0)
 #define RANGE_Y_MAX		(1.0)
-#define DIMENSION		2
+#define DIMENSION		4
 #define GENERATION_MAX	1000
 #define NP				100
 #define EVAL_RESOLUTION	100.0

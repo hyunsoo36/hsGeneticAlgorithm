@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(hello)
+project(hsDE)
 
 set(SOURCE 
-    ./hsGeneticAlgorithm/main.cpp
-    ./hsGeneticAlgorithm/functions.cpp
-    ./hsGeneticAlgorithm/de.cpp
+    ./main.cpp
+    ./functions.cpp
+    ./de.cpp
     )
 
 add_executable(${PROJECT_NAME} ${SOURCE})
